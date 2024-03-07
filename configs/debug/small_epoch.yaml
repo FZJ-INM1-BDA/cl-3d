@@ -1,0 +1,14 @@
+# @package _global_
+
+trainer:
+  max_epochs: 3
+
+datamodule:
+  batch_size: 2
+  train_index_interval: [14811, 14861]
+  train_epoch_size: 16
+  val_index_interval: [0, 50]
+  val_epoch_size: 8
+
+hydra:
+  verbose: True

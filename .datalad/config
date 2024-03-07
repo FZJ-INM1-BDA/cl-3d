@@ -1,0 +1,6 @@
+[datalad "dataset"]
+	id = 901d8f83-9583-4b69-9e66-212078d87d5c
+[datalad "get"]
+	subdataset-source-candidate-100cscratch = /p/cscratch/fs/cjinm11/oberstrass1/{name}
+	subdataset-source-candidate-101scratch = /p/scratch/cjinm11/oberstrass1/{name}
+	subdataset-source-candidate-102fastdata = /p/fastdata/pli/Private/oberstrass1/{name}

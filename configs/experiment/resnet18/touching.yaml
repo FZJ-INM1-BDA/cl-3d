@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - default.yaml
+  - override /datamodule: sampling/touching.yaml
+  - override /model: resnet18.yaml

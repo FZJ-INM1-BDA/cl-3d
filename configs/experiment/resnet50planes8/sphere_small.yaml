@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - default.yaml
+  - override /datamodule: sampling/sphere_small.yaml
+  - override /model: resnet50_planes8.yaml

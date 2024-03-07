@@ -1,0 +1,53 @@
+_target_: vervet_contrastive_3d.datamodules.contrastive_datamodule.ContrastiveDataModule
+batch_size: 32
+patch_size: [128, 128]
+num_workers: 0
+pin_memory: False
+
+name: "default"
+
+train_sampler:
+  _target_: vervet_contrastive_3d.datamodules.components.sampling.DistributedContextSampler
+  samples_file: ${data_dir}/vervet1818-3d-pairs/data/train_stack_aa_samples.csv
+  transforms_path: ${data_dir}/vervet1818-3d/data/aa/transformation
+  translate_mu: 166.4  # 128 * 1.3
+  thickness_mu: 60.  # in mu
+  spacing_mu: [1.3184, 1.3184]  # in mu
+  thetas: [0., 3.141]
+  phis: [0., 6.283]
+  r_mu: 236.  # in mu
+  h_mu: 236.  # in mu
+  exclude_self: True
+  index_interval: [533015, 928862]  # Sections (962 - 1077)
+  epoch_size: 262144
+  shuffle: True
+  shuffle_before_split: False
+  seed: 0
+
+val_sampler:
+  _target_: vervet_contrastive_3d.datamodules.components.sampling.DistributedContextSampler
+  samples_file: ${data_dir}/vervet1818-3d-pairs/data/train_stack_aa_samples.csv
+  transforms_path: ${data_dir}/vervet1818-3d/data/aa/transformation
+  translate_mu: 166.4  # 128 * 1.3
+  thickness_mu: 60.  # in mu
+  spacing_mu: [1.3184, 1.3184]  # in mu
+  thetas: [0., 3.141]
+  phis: [0., 6.283]
+  r_mu: 236.  # in mu
+  h_mu: 236.  # in mu
+  exclude_self: True
+  index_interval: [928863, 942425]  # Sections 1078, ...,  1083
+  epoch_size: 4096
+  shuffle: True
+  shuffle_before_split: False
+  seed: 0
+
+tensor_collection:
+  _target_: vervet_contrastive_3d.datamodules.components.data.ModalityCollection
+  collection_file: ${data_dir}/vervet1818-3d-pairs/data/train_aa_962-1083_chunk256_float16.h5
+  crop_size: [192, 192]
+  to_ram: False
+  # driver: split
+  rdcc_w0: 0
+  rdcc_nbytes: 131_072
+  # rdcc_nslots: 1_000_000

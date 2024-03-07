@@ -1,0 +1,18 @@
+defaults:
+  - contrastive_context.yaml
+
+name: "circle_small"
+
+train_sampler:
+  thetas: [1.571, 1.571]
+  phis: [0., 6.283]
+  r_mu: 118.  # in mu
+  h_mu: 0.  # in mu
+  exclude_self: False
+
+val_sampler:
+  thetas: [1.571, 1.571]
+  phis: [0., 6.283]
+  r_mu: 118.  # in mu
+  h_mu: 0.  # in mu
+  exclude_self: False

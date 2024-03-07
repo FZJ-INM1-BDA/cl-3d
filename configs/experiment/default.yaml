@@ -1,0 +1,24 @@
+# @package _global_
+
+defaults:
+  - override /datamodule: sampling/circle.yaml
+  - override /model: resnet34.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: ddp.yaml
+
+name: "${model.name}_${datamodule.name}"
+seed: 299792458
+
+trainer:
+  max_epochs: 400
+
+model:
+  lr: 1e-3
+  tau: 0.5
+  sync_loss: True
+  weight_decay: 0.000001
+
+datamodule:
+  num_workers: 16 # 32
+  batch_size: 128
+  patch_size: [128, 128]

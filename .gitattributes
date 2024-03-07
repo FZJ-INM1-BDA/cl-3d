@@ -1,0 +1,4 @@
+src/vervet_contrastive_3d/_version.py export-subst
+* annex.backend=MD5E
+**/.git* annex.largefiles=nothing
+* annex.largefiles=(((mimeencoding=binary)and(largerthan=0))or(largerthan=10mb))

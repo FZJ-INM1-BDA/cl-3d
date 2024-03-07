@@ -1,0 +1,11 @@
+defaults:
+  - resnetencoder.yaml
+
+name: "resnet50_planes64"
+
+encoder:
+  block: Bottleneck
+  planes: [64, 128, 256, 512]
+
+projection:
+  features: [2048, 540, 128]

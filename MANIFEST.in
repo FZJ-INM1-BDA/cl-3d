@@ -1,0 +1,2 @@
+include versioneer.py
+include src/vervet_contrastive_3d/_version.py

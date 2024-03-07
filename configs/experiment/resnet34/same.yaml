@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - default.yaml
+  - override /datamodule: sampling/same.yaml
+  - override /model: resnet34.yaml

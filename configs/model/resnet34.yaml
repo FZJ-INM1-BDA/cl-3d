@@ -1,0 +1,11 @@
+defaults:
+  - resnetencoder.yaml
+
+name: "resnet34"
+
+encoder:
+  block: BasicBlock
+  planes: [64, 128, 256, 512]
+
+projection:
+  features: [512, 128, 32]

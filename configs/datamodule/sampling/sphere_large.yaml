@@ -1,0 +1,19 @@
+defaults:
+  - contrastive_context.yaml
+
+name: "sphere_large"
+
+train_sampler:
+  thetas: [0., 3.141]
+  phis: [0., 6.283]
+  r_mu: 472.  # in mu
+  h_mu: 472.  # in mu
+  exclude_self: True
+
+val_sampler:
+  thetas: [0., 3.141]
+  phis: [0., 6.283]
+  r_mu: 472.  # in mu
+  h_mu: 472.  # in mu
+  exclude_self: True
+    

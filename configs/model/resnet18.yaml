@@ -1,0 +1,12 @@
+defaults:
+  - resnetencoder.yaml
+
+name: "resnet18"
+
+encoder:
+  block: BasicBlock
+  layers: [2, 2, 2, 2]
+  planes: [64, 128, 256, 512]
+
+projection:
+  features: [512, 128, 32]
