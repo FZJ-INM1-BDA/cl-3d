@@ -11,7 +11,3 @@
 	url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d.git
 	datalad-id = d7ab3b4c-8690-4792-b055-bcf74d9a8ac3
 	datalad-url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d.git
-[submodule "datasets/vervet1818-tissue-types"]
-	path = datasets/vervet1818-tissue-types
-	url = /p/fastdata/pli/Private/oberstrass1/datasets/annotations/vervet1818-tissue-types/
-	datalad-url = /p/fastdata/pli/Private/oberstrass1/datasets/annotations/vervet1818-tissue-types/
