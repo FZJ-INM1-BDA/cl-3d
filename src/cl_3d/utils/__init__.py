@@ -1,8 +1,8 @@
+from typing import List, Sequence
 from collections import namedtuple
 
 import logging
 import warnings
-from typing import List, Sequence
 
 import numpy as np
 

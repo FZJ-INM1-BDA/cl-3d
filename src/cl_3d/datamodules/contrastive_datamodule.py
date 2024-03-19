@@ -14,13 +14,6 @@ from cl_3d import utils
 from cl_3d.datamodules.components.data import TensorCollection
 
 
-# Distributed
-from atlasmpi import MPI
-
-
-comm = MPI.COMM_WORLD
-
-
 log = utils.get_logger(__name__)
 
 
