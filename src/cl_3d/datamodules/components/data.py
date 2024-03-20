@@ -3,11 +3,13 @@ from typing import Tuple, Any, Dict
 import os
 
 import torch
+import torch.nn.functional as F
 import numpy as np
 import h5py as h5
 
 from atlaslib.io import stage_split_hdf5
 from atlaslib.files import require_copy, require_directory
+from plio.section import Section
 
 from cl_3d import utils
 from cl_3d.datamodules.components.sampling import Location
@@ -20,6 +22,9 @@ comm = MPI.COMM_WORLD
 
 
 log = utils.get_logger(__name__)
+
+
+Coord = namedtuple("Coord", ('x', 'y'))
 
 
 class TensorCollection(object):
@@ -101,3 +106,92 @@ class ModalityCollection(TensorCollection):
             ret = np.array(self._center_crop(dset, loc.row, loc.col), dtype=np.float32)
 
         return {'trans': trans, 'dir': dir, 'ret': ret}
+
+
+
+class SectionDataset(torch.utils.data.Dataset):
+
+    def __init__(self, trans_file, dir_file, ret_file, patch_shape, out_shape, ram=True, norm_trans=None, norm_ret=None):
+        # Expands the dataset to size input by repeating the provided ROIs
+        # rois is a list of dicts with entries 'mask', 'ntrans', 'ret' and 'dir'
+        super().__init__()
+        self.ram = ram
+        self.trans_section_mod = Section(path=trans_file)
+        self.dir_section_mod = Section(path=dir_file)
+        self.ret_section_mod = Section(path=ret_file)
+        if ram:
+            print("Load sections to RAM...")
+            self.trans_section = np.array(self.trans_section_mod.image)
+            self.dir_section = np.array(self.dir_section_mod.image)
+            self.ret_section = np.array(self.ret_section_mod.image)
+            print("All sections loaded to RAM")
+        else:
+            print("Do not load sections to RAM")
+            self.trans_section = self.trans_section_mod.image
+            self.dir_section = self.dir_section_mod.image
+            self.ret_section = self.ret_section_mod.image
+
+        if norm_trans is None:
+            if self.trans_section_mod.norm_value is not None:
+                self.norm_trans = self.trans_section_mod.norm_value
+            else:
+                print("[WARNING] Did not find a normalization value for Transmittance")
+                self.norm_trans = 1.0
+        else:
+            self.norm_trans = norm_trans
+            print(f"Normalize Transmittance by value of {self.norm_trans}")
+        if norm_ret is None:
+            self.norm_ret = 1.0
+        else:
+            self.norm_ret = norm_ret
+            print(f"Normalize Retardation by value of {self.norm_ret}")
+        self.brain_id = self.trans_section_mod.brain_id
+        self.section_id = self.trans_section_mod.id
+        self.section_roi = self.trans_section_mod.roi
+
+        assert (patch_shape[0] - out_shape[0]) % 2 == 0  # Border symmetric
+        assert (patch_shape[1] - out_shape[1]) % 2 == 0  # Border symmetric
+        self.patch_shape = patch_shape
+        self.out_shape = out_shape
+        self.border = ((patch_shape[0] - out_shape[0]) // 2, (patch_shape[1] - out_shape[1]) // 2)
+        self.shape = self.trans_section.shape
+
+        self.coords = [Coord(x=x, y=y) for x in np.arange(0, self.shape[1], out_shape[1]) for y in
+                       np.arange(0, self.shape[0], out_shape[0])]
+
+    def __getitem__(self, i):
+        x = self.coords[i].x
+        y = self.coords[i].y
+
+        b_y = self.border[0]
+        b_x = self.border[1]
+
+        pad_y_0 = max(b_y - y, 0)
+        pad_x_0 = max(b_x - x, 0)
+        pad_y_1 = max(y + (self.patch_shape[0] - b_y) - self.shape[0], 0)
+        pad_x_1 = max(x + (self.patch_shape[1] - b_x) - self.shape[1], 0)
+
+        trans_crop = torch.tensor(np.array(
+            self.trans_section[max(0, y - b_y):min(self.shape[0], y + self.patch_shape[0] - b_y),
+            max(0, x - b_x):min(self.shape[1], x + self.patch_shape[1] - b_x)],
+            dtype=np.float32
+        )) / self.norm_trans
+        ret_crop = torch.tensor(np.array(
+            self.ret_section[max(0, y - b_y):min(self.shape[0], y + self.patch_shape[0] - b_y),
+            max(0, x - b_x):min(self.shape[1], x + self.patch_shape[1] - b_x)],
+            dtype=np.float32
+        )) / self.norm_ret
+        dir_crop = torch.tensor(np.deg2rad(
+            self.dir_section[max(0, y - b_y):min(self.shape[0], y + self.patch_shape[0] - b_y),
+            max(0, x - b_x):min(self.shape[1], x + self.patch_shape[1] - b_x)],
+            dtype=np.float32
+        ))
+
+        trans_crop = F.pad(trans_crop, (pad_x_0, pad_x_1, pad_y_0, pad_y_1), mode='constant', value=0.0)
+        dir_crop = F.pad(dir_crop, (pad_x_0, pad_x_1, pad_y_0, pad_y_1), mode='constant', value=0.0)
+        ret_crop = F.pad(ret_crop, (pad_x_0, pad_x_1, pad_y_0, pad_y_1), mode='constant', value=0.0)
+
+        return {'x': x, 'y': y, 'trans': trans_crop[None], 'dir': dir_crop[None], 'ret': ret_crop[None]}
+
+    def __len__(self):
+        return len(self.coords)

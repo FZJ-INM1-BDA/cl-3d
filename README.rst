@@ -31,23 +31,49 @@ Contrastive learning using 3D context of stacked brain sections.
 Quickstart
 ==========
 
-Create the pipeline environment and install the cl_3d package
--------------------------------------------------------------
+Setup an environment
+--------------------
 
-Setup and activate the included JSC environment (or use your own, e.g. Conda): 
-
-.. code-block:: bash
-
-   source environment/setup.sh
-   source environment/activate.sh
-
-Checkout `environment/README.md` for more info (e.g. on how to create a Jupyter kernel).
-
-Before using the template, one needs to install the project as a package:
+Create a new environment (or use an existing one), e.g. with Anaconda:
 
 .. code-block:: bash
 
-   pip install -e .
+    conda create -n cl-3d python==3.10
+    conda activate cl-3d
+    conda install pip
+
+If running on Ubuntu install the following dependencies:
+
+.. code-block:: bash
+
+    sudo apt install libtiff-dev libopenmpi-dev
+
+or load the corresponding modules when working on the Jülich Supercomputing facility:
+
+.. code-block:: bash
+    
+   ml Stages/2024
+   ml load GCC/12.3.0 ParaStationMPI/5.9.2-1 LibTIFF/.4.5.0
+
+On other systems you might install them as conda:
+
+.. code-block:: bash
+
+    conda install gxx_linux-64 openmpi pylibtiff
+
+
+
+Install the cl_3d package
+-------------------------
+
+Clone the `cl-3d` repository and install it as editable packge:
+
+.. code-block:: bash
+
+    git clone https://jugit.fz-juelich.de/inm-1/bda/personal/aoberstrass/projects/cl-3d.git
+    cd cl-3d
+    pip install -e .
+
 
 Versioneer
 ----------
@@ -176,7 +202,6 @@ Project Organization
 
 How to Cite
 ===========
-
 
 If you use this work in your research, please cite it as follows:
 

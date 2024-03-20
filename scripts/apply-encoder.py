@@ -12,8 +12,7 @@ import click
 from torch.utils.data import DataLoader
 import torch
 
-from pli.data.section import SectionDataset
-
+from cl_3d.datamodules.components.data import SectionDataset
 from cl_3d.models.contrastive_module import ContrastiveLitModule
 
 # Distributed
