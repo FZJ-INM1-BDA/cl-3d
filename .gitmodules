@@ -1,13 +1,5 @@
-[submodule "environment"]
-	path = environment
-	url = https://jugit.fz-juelich.de/aoberstrass/envs/pli-env.git
 [submodule "datasets/vervet1818-3d-pairs"]
 	path = datasets/vervet1818-3d-pairs
 	url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d-pairs.git
 	datalad-id = cf5c3459-34bd-4b2f-88db-1225a483e8d7
 	datalad-url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d-pairs.git
-[submodule "datasets/vervet1818-3d"]
-	path = datasets/vervet1818-3d
-	url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d.git
-	datalad-id = d7ab3b4c-8690-4792-b055-bcf74d9a8ac3
-	datalad-url = https://jugit.fz-juelich.de/aoberstrass/datasets/vervet1818/vervet1818-3d.git
