@@ -16,14 +16,13 @@ echo "Enabling environment..."
 conda activate cl-3d
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3
-# export NCCL_DEBUG=INFO
 
 export HDF5_USE_FILE_LOCKING='FALSE'
 
 export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)i
 export MASTER_PORT=23519
 
-### Define storage paths ###
+### Load data to RAM before script start ###
 
 # export DATA_DIR=datasets/
 # export OUT_DIR=/dev/shm/$USER

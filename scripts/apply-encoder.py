@@ -126,9 +126,9 @@ def save_features(
 @click.option("--out", type=click.Path(exists=True, file_okay=True, dir_okay=True))
 @click.option("--norm_trans", type=float, default=None)
 @click.option("--num_workers", type=int, default=0)
-@click.option("--batch_size", type=int, default=1)
+@click.option("--batch_size", type=int, default=16)
 @click.option("--patch_size", type=int, default=128)
-@click.option("--overlap", type=float, default=0.0)
+@click.option("--overlap", type=float, default=0.5)
 @click.option("--ram", default=False, is_flag=True)
 @click.option("--dtype", type=str, default=None)
 def cli(ckpt, trans, dir, ret, out, norm_trans, num_workers, batch_size, patch_size, overlap, ram, dtype):

@@ -124,10 +124,25 @@ For local debugging start the script as
     
     HYDRA_FULL_ERROR=1 python scripts/train.py debug=step
 
+or submit a job to the development partition on the JSC:
+
+.. code-block:: bash
+    
+    sbatch scripts/dev_jureca.sbatch default
+
+For full-scale training submit the job as
+
+.. code-block:: bash
+    
+    sbatch scripts/train_jureca.sbatch default
+
+In both cases `default` can be replaced with an experiment condigures under `configs/experiment`.
+
 
 Inference
 ---------
 
+To apply a trained model to unseen sections use `python scripts/apply-encoder.py` with a trained model for `--ckpt`.
 
 
 Versioneer
