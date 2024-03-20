@@ -7,7 +7,6 @@ import math
 
 import torch
 from torch.utils.data.sampler import Sampler
-import torch.distributed as dist
 
 import numpy as np
 import pandas as pd
@@ -88,13 +87,13 @@ class MyDistributedSampler(Sampler):
         # Has to be called in MPI context
         if self.num_replicas is None:
             if torch.distributed.is_available() and torch.distributed.is_initialized():
-                self.num_replicas = dist.get_world_size()
+                self.num_replicas = torch.distributed.get_world_size()
                 log.info(f"Use {self.num_replicas} replications of the dataset")
             else:
                 self.num_replicas = 1
         if self.rank is None:
             if torch.distributed.is_available() and torch.distributed.is_initialized():
-                self.rank = dist.get_rank()
+                self.rank = torch.distributed.get_rank()
             else:
                 self.rank = 0
         if self.rank >= self.num_replicas or self.rank < 0:

@@ -1,4 +1,4 @@
-_target_: vervet_contrastive_3d.models.contrastive_module.ContrastiveLitModule
+_target_: cl_3d.models.contrastive_module.ContrastiveLitModule
 lr: 1e-3
 weight_decay: 1e-6
 tau: 0.5
@@ -8,12 +8,12 @@ dms_timeout: 300
 name: "default"
 
 encoder:
-  _target_: vervet_contrastive_3d.models.components.encoder.PLIResnetEncoder
+  _target_: cl_3d.models.components.encoder.PLIResnetEncoder
   block: Bottleneck
   layers: [3, 4, 6, 3]
   planes: [8, 16, 32, 64]
   norm_layer: BatchNorm2d
 
 projection:
-  _target_: vervet_contrastive_3d.models.components.encoder.ProjectionHead
+  _target_: cl_3d.models.components.encoder.ProjectionHead
   features: [256, 90, 32]

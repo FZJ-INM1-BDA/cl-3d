@@ -45,7 +45,7 @@ def get_config():
     cfg.style = "pep440"
     cfg.tag_prefix = ""
     cfg.parentdir_prefix = "''"
-    cfg.versionfile_source = "src/vervet_contrastive_3d/_version.py"
+    cfg.versionfile_source = "src/cl_3d/_version.py"
     cfg.verbose = False
     return cfg
 

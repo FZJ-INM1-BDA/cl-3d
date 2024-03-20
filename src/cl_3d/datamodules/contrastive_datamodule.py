@@ -8,7 +8,7 @@ import albumentations as A
 import cv2
 
 import pli_transforms.augmentations as aug
-from pli_transforms.pytorch import ToTensorPLI
+from pli_transforms.augmentations.pytorch import ToTensorPLI
 
 from cl_3d import utils
 from cl_3d.datamodules.components.data import TensorCollection

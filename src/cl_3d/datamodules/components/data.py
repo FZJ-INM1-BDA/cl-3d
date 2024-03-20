@@ -1,3 +1,4 @@
+from collections import namedtuple
 from typing import Tuple, Any, Dict
 
 import os
@@ -15,10 +16,10 @@ from cl_3d import utils
 from cl_3d.datamodules.components.sampling import Location
 
 # Distributed
-from atlasmpi import MPI
+#from atlasmpi import MPI
 
 
-comm = MPI.COMM_WORLD
+#comm = MPI.COMM_WORLD
 
 
 log = utils.get_logger(__name__)
@@ -74,7 +75,8 @@ class ModalityCollection(TensorCollection):
             file_target = os.path.join(shm_dir, os.path.basename(self.collection_file))
             self.collection_file = require_copy(self.collection_file, file_target, follow_symlinks=True)
 
-        comm.barrier()
+        if torch.distributed.is_available() and torch.distributed.is_initialized():
+            torch.distributed.barrier()
 
         log.info(f"Load data from file {self.collection_file}")
         self.h5_file = h5.File(self.collection_file, 'r', **self.h5kwargs)

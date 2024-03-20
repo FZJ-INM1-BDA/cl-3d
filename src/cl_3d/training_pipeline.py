@@ -2,6 +2,7 @@ import os
 from typing import List, Optional
 
 import hydra
+from hydra._internal.utils import _locate
 from omegaconf import DictConfig
 from pytorch_lightning import (
     Callback,
@@ -10,7 +11,7 @@ from pytorch_lightning import (
     Trainer,
     seed_everything,
 )
-from pytorch_lightning.loggers import LightningLoggerBase
+from pytorch_lightning.loggers.logger import Logger
 
 from cl_3d import utils
 
@@ -35,17 +36,31 @@ def train(config: DictConfig) -> Optional[float]:
     # Convert relative ckpt path to absolute path if necessary
     ckpt_path = config.trainer.get("resume_from_checkpoint")
     if ckpt_path and not os.path.isabs(ckpt_path):
-        config.trainer.resume_from_checkpoint = os.path.join(
+        ckpt_path = os.path.join(
             hydra.utils.get_original_cwd(), ckpt_path
         )
+    del config.trainer.resume_from_checkpoint # Workaround for lightning 2.0 (ckpt_path is now fed to train())
 
     # Init lightning datamodule
     log.info(f"Instantiating datamodule <{config.datamodule._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(config.datamodule, _recursive_=False)
 
     # Init lightning model
-    log.info(f"Instantiating model <{config.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(config.model, _recursive_=False)
+    model_path = config.model.get("load_from_checkpoint")
+    if model_path:
+        if not os.path.isabs(model_path):
+            model_path = os.path.join(
+                hydra.utils.get_original_cwd(), model_path
+            )
+        model_class = _locate(config.model._target_)
+        exclude_keys = {"_target_", "_convert_", "_recursive_", "_partial_"}
+        moddel_attrs = dict((k, v) for k, v in config.model.items() if k not in exclude_keys)
+        log.info(f"Load model <{config.model._target_}> from checkpoint")
+        model: LightningModule = model_class.load_from_checkpoint(model_path, **moddel_attrs)
+    else:
+        log.info(f"Instantiating model <{config.model._target_}>")
+        model: LightningModule = hydra.utils.instantiate(config.model, _recursive_=False)
+
 
     # Init lightning callbacks
     callbacks: List[Callback] = []
@@ -56,7 +71,7 @@ def train(config: DictConfig) -> Optional[float]:
                 callbacks.append(hydra.utils.instantiate(cb_conf))
 
     # Init lightning loggers
-    logger: List[LightningLoggerBase] = []
+    logger: List[Logger] = []
     if "logger" in config:
         for _, lg_conf in config.logger.items():
             if "_target_" in lg_conf:
@@ -83,7 +98,11 @@ def train(config: DictConfig) -> Optional[float]:
     # Train the model
     if config.get("train"):
         log.info("Starting training!")
-        trainer.fit(model=model, datamodule=datamodule)
+
+        if ckpt_path:
+            log.info(f"Resume training from {ckpt_path}")
+        
+        trainer.fit(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
 
     # Get metric score for hyperparameter optimization
     optimized_metric = config.get("optimized_metric")
@@ -93,14 +112,6 @@ def train(config: DictConfig) -> Optional[float]:
             "Make sure the `optimized_metric` in `hparams_search` config is correct!"
         )
     score = trainer.callback_metrics.get(optimized_metric)
-
-    # Test the model
-    if config.get("test"):
-        ckpt_path = "best"
-        if not config.get("train") or config.trainer.get("fast_dev_run"):
-            ckpt_path = None
-        log.info("Starting testing!")
-        trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
 
     # Make sure everything closed properly
     log.info("Finalizing!")

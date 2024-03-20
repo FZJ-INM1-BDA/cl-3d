@@ -16,9 +16,9 @@ model:
   lr: 1e-3
   tau: 0.5
   sync_loss: True
-  weight_decay: 0.000001
+  weight_decay: 1e-6
 
 datamodule:
-  num_workers: 16 # 32
+  num_workers: 32
   batch_size: 128
   patch_size: [128, 128]

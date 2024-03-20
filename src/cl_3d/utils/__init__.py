@@ -1,8 +1,8 @@
-from typing import List, Sequence
 from collections import namedtuple
 
 import logging
 import warnings
+from typing import List, Sequence
 
 import numpy as np
 
@@ -11,6 +11,8 @@ import rich.syntax
 import rich.tree
 from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning.utilities import rank_zero_only
+from pytorch_lightning.loggers.logger import Logger
+from pytorch_lightning.loggers import TensorBoardLogger, WandbLogger
 
 
 Seeds = namedtuple('Seeds', ['numppy', 'torch', 'stdlib'])
@@ -135,7 +137,7 @@ def log_hyperparameters(
     datamodule: pl.LightningDataModule,
     trainer: pl.Trainer,
     callbacks: List[pl.Callback],
-    logger: List[pl.loggers.LightningLoggerBase],
+    logger: List[Logger],
 ) -> None:
     """Controls which config parts are saved by Lightning loggers.
 
@@ -184,13 +186,13 @@ def finish(
     datamodule: pl.LightningDataModule,
     trainer: pl.Trainer,
     callbacks: List[pl.Callback],
-    logger: List[pl.loggers.LightningLoggerBase],
+    logger: List[Logger],
 ) -> None:
     """Makes sure everything closed properly."""
 
     # without this sweeps with wandb logger might crash!
     for lg in logger:
-        if isinstance(lg, pl.loggers.wandb.WandbLogger):
+        if isinstance(lg, WandbLogger):
             import wandb
 
             wandb.finish()

@@ -81,10 +81,6 @@ class ContrastiveLitModule(LightningModule):
 
         return {'loss': loss}
 
-    def training_epoch_end(self, outputs: List[Any]):
-        # `outputs` is a list of dicts returned from `training_step()`
-        pass
-
     def validation_step(self, batch: Any, batch_idx: int):
         loss, z1, z2 = self.step(batch)
         self.log("val/loss", loss, on_step=False, on_epoch=True, rank_zero_only=True)
@@ -92,13 +88,6 @@ class ContrastiveLitModule(LightningModule):
         # TODO: Return z1, h1
 
         return {'loss': loss}
-
-    def validation_epoch_end(self, outputs: List[Any]):
-        # Gather h1 and z1 and vis as tb pca
-
-        # TODO Represent tensorboard graph
-
-        pass
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(
