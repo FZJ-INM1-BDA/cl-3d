@@ -1,5 +1,4 @@
 
-
 .. image:: https://img.shields.io/badge/PyTorch-ee4c2c?logo=pytorch&logoColor=white
     :alt: PyTorch
     :target: https://pytorch.org/get-started/locally/
@@ -136,13 +135,13 @@ For full-scale training submit the job as
     
     sbatch scripts/train_jureca.sbatch default
 
-In both cases `default` can be replaced with an experiment condigures under `configs/experiment`.
+In both cases `default` can be replaced with an experiment configuration under `configs/experiment`.
 
 
 Inference
 ---------
 
-To apply a trained model to unseen sections use `python scripts/apply-encoder.py` with a trained model for `--ckpt`.
+To apply a trained model to unseen sections use `python scripts/apply-encoder.py` with a path to the checkpoint of a trained model for `--ckpt`.
 
 
 Versioneer
