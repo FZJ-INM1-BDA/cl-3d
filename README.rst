@@ -53,7 +53,7 @@ or load the corresponding modules when working on the Jülich Supercomputing fac
 .. code-block:: bash
     
    ml Stages/2024
-   ml load GCC/12.3.0 ml OpenMPI/4.1.5 LibTIFF/.4.5.0
+   ml load GCC/12.3.0 OpenMPI/4.1.5 LibTIFF/.4.5.0
 
 On other systems you might install them using conda:
 
