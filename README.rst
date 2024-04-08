@@ -117,7 +117,7 @@ to disable file locking.
 Training
 --------
 
-For local debugging start the script as
+For local debugging (not on a compute node) start the script as
 
 .. code-block:: bash
     
