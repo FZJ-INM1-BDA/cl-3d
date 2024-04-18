@@ -59,7 +59,7 @@ On other systems you might install them using conda:
 
 .. code-block:: bash
 
-    conda install openmpi pylibtiff
+    conda install anaconda::openmpi conda-forge::pylibtiff
 
 
 
