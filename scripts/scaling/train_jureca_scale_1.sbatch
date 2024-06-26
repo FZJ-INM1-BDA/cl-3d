@@ -7,7 +7,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
-#SBATCH --time=0:40:00
+#SBATCH --time=0:60:00
 
 echo "Starting script"
 source $HOME/.bashrc
@@ -26,5 +26,6 @@ export MASTER_PORT=23519
 
 srun -c 64 python scripts/train.py \
   experiment=scaling/node_scaling \
+  name=resnet50_1_node \
   trainer.num_nodes=1 \
   debug=profiler

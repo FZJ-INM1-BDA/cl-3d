@@ -5,7 +5,7 @@
 #SBATCH --error=logs/slurm/err_%j.job
 #SBATCH --partition=dc-gpu
 #SBATCH --gres=gpu:4
-#SBATCH --nodes=4
+#SBATCH --nodes=16
 #SBATCH --ntasks-per-node=4
 #SBATCH --time=0:30:00
 
@@ -26,6 +26,6 @@ export MASTER_PORT=23519
 
 srun -c 64 python scripts/train.py \
   experiment=scaling/node_scaling \
-  name=resnet50_4_nodes \
-  trainer.num_nodes=4 \
+  name=resnet50_16_nodes \
+  trainer.num_nodes=16 \
   debug=profiler

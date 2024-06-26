@@ -13,7 +13,7 @@ trainer:
 
 datamodule:
   num_workers: 28
-  batch_size: 256
+  batch_size: 128
 
   train_sampler:
     epoch_size: 4194304
