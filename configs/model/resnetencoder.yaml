@@ -3,7 +3,7 @@ lr: 1e-3
 weight_decay: 1e-6
 tau: 0.5
 sync_loss: False
-dms_timeout: 300
+dms_timeout: 500
 
 name: "default"
 

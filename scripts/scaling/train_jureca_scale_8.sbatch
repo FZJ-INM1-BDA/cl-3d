@@ -22,10 +22,13 @@ export HDF5_USE_FILE_LOCKING='FALSE'
 export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)i
 export MASTER_PORT=23519
 
+export NCCL_DEBUG=INFO
+export HYDRA_FULL_ERROR=1
+
 ### Run script ###
 
 srun -c 64 python scripts/train.py \
   experiment=scaling/node_scaling \
-  name=resnet50_8_nodes \
+  name=resnet50_8_nodes_512 \
   trainer.num_nodes=8 \
   debug=profiler

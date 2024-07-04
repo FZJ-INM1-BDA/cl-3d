@@ -13,11 +13,13 @@ trainer:
 
 datamodule:
   num_workers: 28
-  batch_size: 128
+  batch_size: 16
+  patch_size: [512, 512]
 
   train_sampler:
-    epoch_size: 4194304
+    epoch_size: 524288
 
   tensor_collection:
     to_ram: True
     driver: split
+    crop_size: [512, 512]

@@ -26,6 +26,6 @@ export MASTER_PORT=23519
 
 srun -c 64 python scripts/train.py \
   experiment=scaling/node_scaling \
-  name=resnet50_6_nodes \
+  name=resnet50_6_nodes_512 \
   trainer.num_nodes=6 \
   debug=profiler
