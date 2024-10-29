@@ -42,6 +42,6 @@ export MASTER_PORT=23519
 
 echo Run experiment $1
 
-srun -c 32 python scripts/train.py \
+srun -c 64 python scripts/train.py \
   experiment=$1 \
   trainer.num_nodes=4 \

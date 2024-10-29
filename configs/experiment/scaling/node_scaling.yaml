@@ -1,0 +1,25 @@
+# @package _global_
+
+defaults:
+  - default.yaml
+  - override /datamodule: sampling/sphere_small.yaml
+  - override /model: resnet50.yaml
+
+name: "resnet50_scaling"
+
+trainer:
+  max_epochs: 1
+  profiler: "simple"
+
+datamodule:
+  num_workers: 28
+  batch_size: 16
+  patch_size: [512, 512]
+
+  train_sampler:
+    epoch_size: 524288
+
+  tensor_collection:
+    to_ram: True
+    driver: split
+    crop_size: [512, 512]

@@ -1,0 +1,131 @@
+model:
+  _target_: cl_3d.models.contrastive_module.ContrastiveLitModule
+  lr: 0.001
+  weight_decay: 1.0e-06
+  tau: 0.5
+  sync_loss: true
+  dms_timeout: 300
+  name: resnet50_planes8_962-1083
+  encoder:
+    _target_: cl_3d.models.components.encoder.PLIResnetEncoder
+    block: Bottleneck
+    layers:
+    - 3
+    - 4
+    - 6
+    - 3
+    planes:
+    - 8
+    - 16
+    - 32
+    - 64
+    norm_layer: BatchNorm2d
+  projection:
+    _target_: cl_3d.models.components.encoder.ProjectionHead
+    features:
+    - 256
+    - 90
+    - 32
+model/params/total: 399496
+model/params/trainable: 399496
+model/params/non_trainable: 0
+datamodule:
+  _target_: cl_3d.datamodules.contrastive_datamodule.ContrastiveDataModule
+  batch_size: 128
+  patch_size:
+  - 128
+  - 128
+  num_workers: 16
+  pin_memory: false
+  name: circle
+  train_sampler:
+    _target_: cl_3d.datamodules.components.sampling.DistributedContextSampler
+    samples_file: /dev/shm/oberstrass1/vervet1818-3d-pairs/data/train_stack_aa_samples.csv
+    transforms_path: /dev/shm/oberstrass1/vervet1818-3d/data/aa/transformation
+    translate_mu: 166.4
+    thickness_mu: 60.0
+    spacing_mu:
+    - 1.3
+    - 1.3
+    thetas:
+    - 1.571
+    - 1.571
+    phis:
+    - 0.0
+    - 6.283
+    r_mu: 118.0
+    h_mu: 0.0
+    exclude_self: false
+    index_interval:
+    - 533015
+    - 928862
+    epoch_size: 262144
+    shuffle: true
+    shuffle_before_split: false
+    seed: 0
+  val_sampler:
+    _target_: cl_3d.datamodules.components.sampling.DistributedContextSampler
+    samples_file: /dev/shm/oberstrass1/vervet1818-3d-pairs/data/train_stack_aa_samples.csv
+    transforms_path: /dev/shm/oberstrass1/vervet1818-3d/data/aa/transformation
+    translate_mu: 166.4
+    thickness_mu: 60.0
+    spacing_mu:
+    - 1.3
+    - 1.3
+    thetas:
+    - 1.571
+    - 1.571
+    phis:
+    - 0.0
+    - 6.283
+    r_mu: 118.0
+    h_mu: 0.0
+    exclude_self: false
+    index_interval:
+    - 928863
+    - 942425
+    epoch_size: 4096
+    shuffle: true
+    shuffle_before_split: false
+    seed: 0
+  tensor_collection:
+    _target_: cl_3d.datamodules.components.data.ModalityCollection
+    collection_file: /dev/shm/oberstrass1/vervet1818-3d-pairs/data/train_aa_962-1083_chunk256_float16.h5
+    crop_size:
+    - 192
+    - 192
+    to_ram: false
+    rdcc_w0: 0
+    rdcc_nbytes: 131072
+trainer:
+  _target_: pytorch_lightning.Trainer
+  gpus: 4
+  max_epochs: 400
+  replace_sampler_ddp: false
+  log_every_n_steps: 1
+  resume_from_checkpoint: null
+  strategy: ddp
+  sync_batchnorm: true
+seed: 299792458
+callbacks:
+  model_checkpoint:
+    _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    monitor: val/loss
+    mode: min
+    save_top_k: 1
+    save_last: true
+    verbose: false
+    dirpath: checkpoints/
+    filename: epoch_{epoch:03d}
+    auto_insert_metric_name: false
+  early_stopping:
+    _target_: pytorch_lightning.callbacks.EarlyStopping
+    monitor: val/loss
+    mode: min
+    patience: 50
+    min_delta: 0
+  model_summary:
+    _target_: pytorch_lightning.callbacks.RichModelSummary
+    max_depth: -1
+  rich_progress_bar:
+    _target_: pytorch_lightning.callbacks.RichProgressBar

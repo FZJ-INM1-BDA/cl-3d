@@ -9,7 +9,7 @@ import numpy as np
 import h5py as h5
 
 from atlaslib.io import stage_split_hdf5
-from atlaslib.files import require_copy, require_directory
+from atlaslib.files import require_directory
 from plio.section import Section
 
 from cl_3d import utils
@@ -66,17 +66,33 @@ class ModalityCollection(TensorCollection):
         self.h5kwargs = {'driver': driver, **h5kwargs}
         self.stacked = None
 
-    def setup(self):
-        shm_dir = f"/dev/shm/{os.getlogin()}"
-        if self.driver == 'split':
-            self.collection_file = stage_split_hdf5(self.collection_file, stage_dir=shm_dir)
-        elif self.to_ram:
-            shm_dir = require_directory(shm_dir)
-            file_target = os.path.join(shm_dir, os.path.basename(self.collection_file))
-            self.collection_file = require_copy(self.collection_file, file_target, follow_symlinks=True)
+        self.shm_dir = f"/dev/shm/{os.getlogin()}"
 
-        if torch.distributed.is_available() and torch.distributed.is_initialized():
-            torch.distributed.barrier()
+    def prepare_data(self):
+        from cl_3d.utils.io import require_copy
+
+        if self.to_ram or self.driver == 'split':
+            # Some files will go to shared memory
+            require_directory(self.shm_dir)
+
+        # Copy data to local storage
+        if self.to_ram:
+            file_target = os.path.join(self.shm_dir, os.path.basename(self.collection_file))
+            if self.driver == 'split':
+                require_copy(self.collection_file + "-r.h5", file_target + "-r.h5", follow_symlinks=True)
+                require_copy(self.collection_file + "-m.h5", file_target + "-m.h5", follow_symlinks=True)
+            else:
+                require_copy(self.collection_file, file_target, follow_symlinks=True)
+        elif self.driver == 'split':
+            self.collection_file = stage_split_hdf5(self.collection_file, stage_dir=self.shm_dir)
+
+        # TODO; check if cp or require copy is faster
+        # self.tensor_collection.collection_file = copy_file_shm(self.tensor_collection.collection_file)
+
+    def setup(self):
+        
+        if self.to_ram or self.driver == 'split':
+            self.collection_file = os.path.join(self.shm_dir, os.path.basename(self.collection_file))
 
         log.info(f"Load data from file {self.collection_file}")
         self.h5_file = h5.File(self.collection_file, 'r', **self.h5kwargs)

@@ -73,6 +73,9 @@ class ContrastiveDataModule(LightningDataModule):
         # this line allows to access init params with 'self.hparams' attribute
         self.save_hyperparameters(logger=False)
 
+        # Prepare data per node
+        self.prepare_data_per_node = True
+
         self.tensor_collection = hydra.utils.instantiate(tensor_collection)
         self.train_sampler = hydra.utils.instantiate(train_sampler)
         self.val_sampler = hydra.utils.instantiate(val_sampler)
@@ -118,9 +121,8 @@ class ContrastiveDataModule(LightningDataModule):
         self.val_dataset: Optional[Dataset] = None
 
     def prepare_data(self):
-        """Download data if needed. This method is called only from a single GPU.
-        Do not use it to assign state (self.x = y)."""
-        pass
+        """Prepare data on local node. Is only called once per compute node by setting self.prepare_data_per_node = True"""
+        self.tensor_collection.prepare_data()
 
     def setup(self, stage: Optional[str] = None):
         """Load data. Set variables: `self.data_train`, `self.data_val`, `self.data_test`.
