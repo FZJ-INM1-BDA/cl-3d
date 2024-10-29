@@ -228,15 +228,15 @@ Project Organization
 How to Cite
 ===========
 
-If you use this work in your research, please cite it as follows:
+When using this work in your research, please cite it as follows:
 
 .. code-block:: latex
 
-   @article{oberstrass2024,
-     title = {Self-{{Supervised Representation Learning}} for {{Nerve Fiber Distribution Patterns}} in {{3D-PLI}}},
-     author = {Oberstrass, A. and others},
-     year = {2024},
-     journal = {arXiv preprint arXiv:2401.17207},
-     eprint = {2401.17207},
-     archiveprefix = {arxiv}
-   }
+  @article{oberstrass2024,
+    title = {Self-{{Supervised Representation Learning}} for {{Nerve Fiber Distribution Patterns}} in {{3D-PLI}}},
+    author = {Oberstrass, Alexander and Muenzing, Sascha E. A. and Niu, Meiqi and {Palomero-Gallagher}, Nicola and Schiffer, Christian and Axer, Markus and Amunts, Katrin and Dickscheid, Timo},
+    year = {2024},
+    journal = {Imaging Neuroscience},
+    issn = {2837-6056},
+    doi = {https://doi.org/10.1162/imag_a_00351},
+  }
