@@ -30,38 +30,6 @@ Contrastive learning using 3D context of stacked brain sections.
 Quickstart
 ==========
 
-Setup an environment
---------------------
-
-Create a new environment (or use an existing one), e.g. with Anaconda:
-
-.. code-block:: bash
-
-    conda create -n cl-3d python==3.10
-    conda activate cl-3d
-    conda install pip
-    conda install gxx_linux-64==9.3.0  # For compiling mpi4py and pytiff
-
-If running on Ubuntu install the following dependencies:
-
-.. code-block:: bash
-
-    sudo apt install libtiff-dev libopenmpi-dev
-
-or load the corresponding modules when working on the Jülich Supercomputing facility:
-
-.. code-block:: bash
-    
-   ml Stages/2024
-   ml load GCC/12.3.0 OpenMPI/4.1.5 LibTIFF/.4.5.0
-
-On other systems you might install them using conda:
-
-.. code-block:: bash
-
-    conda install anaconda::openmpi conda-forge::pylibtiff
-
-
 
 Install the cl_3d package
 -------------------------
@@ -74,44 +42,26 @@ Clone the `cl-3d` repository and install it as editable packge:
     cd cl-3d
     pip install -e .
 
+The installation requires Python 3.10 and the GCC, OpenMPI and LibTIFF packages.
 
-DataLad
--------
-
-To retrieve the training data run
+On Ubuntu you can install the packages as:
 
 .. code-block:: bash
 
-   datalad get datasets/vervet1818-3d-pairs/
+    sudo apt install build-essential libtiff-dev libopenmpi-dev
 
-or
-
-.. code-block:: bash
-
-   datalad get --reckless=ephemeral datasets/vervet1818-3d-pairs
-
-if you just want to link to the data on a remote without copying the files.
-Additional sources of submodules are specified as `datalad.get.subdataset-source-candidate` in `.datalad/config` (See the `doc <http://handbook.datalad.org/en/latest/beyond_basics/101-148-clonepriority.html>`_).
-
-Please note that access to the data can only be provided on request.
-
-
-cscratch
---------
-
-To use `cscratch` on JSC run
+install them using conda:
 
 .. code-block:: bash
 
-   ime-ctl -i --block -K data/subdataset/path/*
+    conda install gxx_linux-64==9.3.0 anaconda::openmpi conda-forge::pylibtiff
 
-to make data available from cscratch and
+or load the corresponding modules when working on the Jülich Supercomputing facility:
 
 .. code-block:: bash
-
-   export HDF5_USE_FILE_LOCKING='FALSE'
-
-to disable file locking.
+    
+   ml Stages/2024
+   ml load GCC/12.3.0 OpenMPI/4.1.5 LibTIFF/.4.5.0
 
 
 Training
@@ -142,24 +92,6 @@ Inference
 ---------
 
 To apply a trained model to unseen sections use `python scripts/apply-encoder.py` with a path to the checkpoint of a trained model for `--ckpt`.
-
-
-Versioneer
-----------
-
-This project uses `Versioneer <https://github.com/python-versioneer/python-versioneer>`_ to record package versions.
-
-To create a new version use the `Git Tagging <https://git-scm.com/book/en/v2/Git-Basics-Tagging>`_ utility:
-
-.. code-block:: bash
-
-   git tag 1.2.3
-
-To distribute it through gitlab push the tags and commits as
-
-.. code-block:: bash
-
-   git push; git push --tags
 
 
 Project Organization
@@ -223,6 +155,45 @@ Project Organization
     ├── setup.py                             <- [DEPRECATED] Use `python setup.py develop` to install for
     │                                           development or `python setup.py bdist_wheel` to build.
     └── README.md
+
+
+DataLad
+-------
+
+To retrieve the training data run
+
+.. code-block:: bash
+
+   datalad get datasets/vervet1818-3d-pairs/
+
+or
+
+.. code-block:: bash
+
+   datalad get --reckless=ephemeral datasets/vervet1818-3d-pairs
+
+if you just want to link to the data on a remote without copying the files.
+Additional sources of submodules are specified as `datalad.get.subdataset-source-candidate` in `.datalad/config` (See the `doc <http://handbook.datalad.org/en/latest/beyond_basics/101-148-clonepriority.html>`_).
+
+Please note that access to the data can only be provided on request.
+
+
+cscratch
+--------
+
+To use `cscratch` on JSC run
+
+.. code-block:: bash
+
+   ime-ctl -i --block -K data/subdataset/path/*
+
+to make data available from cscratch and
+
+.. code-block:: bash
+
+   export HDF5_USE_FILE_LOCKING='FALSE'
+
+to disable file locking.
 
 
 How to Cite
